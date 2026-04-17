@@ -21,9 +21,9 @@ public class UserService {
     // this.userRepository = userRepository;
     // }
 
-    // public List<User> getUsers() {
-    // return userRepository.findAll();
-    // }
+    public List<User> getUsersWithoutPagination() {
+    return userRepository.findAll();
+    }
 
     public Page<User> getUsers(int page, int size) {
 
@@ -31,6 +31,7 @@ public class UserService {
 
         return userRepository.findAll(pageable);
     }
+    
 
     public void addUser(User user) {
 

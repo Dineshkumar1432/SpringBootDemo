@@ -20,11 +20,11 @@ public class UserController {
         this.userService = userService;
     }
 
-    // @GetMapping("/users")
-    // public List<User> getUsers() {
-    // return userService.getUsers();
-    // }
     @GetMapping("/users")
+    public List<User> getUsersWithoutPagination() {
+    return userService.getUsersWithoutPagination();
+    }
+    @GetMapping("/usersPaginated")
     public Page<User> getUsers(
             @RequestParam int page,
             @RequestParam int size) {
