@@ -43,21 +43,19 @@ public class UserController {
                 .getContext()
                 .getAuthentication()
                 .getName();
-        String role = SecurityContextHolder.getContext()
+
+        boolean isAdmin = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getAuthorities()
-                .iterator()
-                .next()
-                .getAuthority();
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
         UserDTO user = userService.getUser(id);
 
-        if (!user.getUsername().equals(loggedInUser)) {
+        if (!user.getUsername().equals(loggedInUser) && !isAdmin) {
             throw new RuntimeException("Access Denied");
+        }
 
-        }
-        if (role.equals("ADMIN")) {
-            return user;
-        }
         return user;
     }
 
