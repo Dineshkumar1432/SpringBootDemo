@@ -82,6 +82,7 @@ public class UserService {
                 .orElseThrow(() -> new NoSuchElementException("User not found with id: " + id));
 
         UserDTO dto = new UserDTO();
+
         dto.setName(user.getName());
         dto.setUsername(user.getUsername());
 

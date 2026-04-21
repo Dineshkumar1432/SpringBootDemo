@@ -3,8 +3,8 @@ package com.example.demo.service;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+// import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+// import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
@@ -13,7 +13,7 @@ import com.example.demo.util.JwtUtil;
 @Service
 public class AuthService {
 
-    private final AuthenticationManager authenticationManager;
+    // private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     @Autowired
@@ -21,7 +21,7 @@ public class AuthService {
 
     public AuthService(AuthenticationManager authenticationManager,
             JwtUtil jwtUtil, UserRepository userRepository) {
-        this.authenticationManager = authenticationManager;
+        // this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
     }
@@ -44,8 +44,8 @@ public class AuthService {
 
     public String login(String username, String password) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password));
+        // Authentication authentication = authenticationManager.authenticate(
+        // new UsernamePasswordAuthenticationToken(username, password));
 
         // If credentials are wrong → exception will be thrown automatically
         return jwtUtil.generateToken(username);
