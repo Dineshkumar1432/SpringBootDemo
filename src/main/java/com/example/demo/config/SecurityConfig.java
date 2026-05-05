@@ -67,7 +67,7 @@ public class SecurityConfig {
                     user.getUsername(),
                     user.getPassword(),
                     Collections.singletonList(
-                            new SimpleGrantedAuthority("ROLE_" + user.getRole())));
+                            new SimpleGrantedAuthority("ROLE_" + user.getRole().toUpperCase())));
         };
     }
 

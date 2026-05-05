@@ -83,7 +83,7 @@ public class UserController {
 
         UserDTO existingUser = userService.getUser(id);
 
-        // 🔥 Only owner can update
+        //  Only owner can update
         if (!existingUser.getUsername().equals(loggedInUser)) {
             throw new RuntimeException("Access Denied");
         }
@@ -95,4 +95,5 @@ public class UserController {
     public List<User> searchUser(@RequestParam String name) {
         return userService.searchByName(name);
     }
+
 }

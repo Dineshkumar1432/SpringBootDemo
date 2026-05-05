@@ -60,7 +60,7 @@ public class JwtFilter extends OncePerRequestFilter {
                                 user.getUsername(),
                                 null,
                                 Collections.singletonList(
-                                        new SimpleGrantedAuthority("ROLE_" + user.getRole())));
+                                        new SimpleGrantedAuthority("ROLE_" + user.getRole().toUpperCase())));
 
                         SecurityContextHolder.getContext().setAuthentication(auth);
                     }
@@ -68,6 +68,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             } catch (Exception e) {
                 // DO NOTHING — just continue request
+                e.printStackTrace();
             }
         }
 
