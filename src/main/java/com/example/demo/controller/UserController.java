@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 import com.example.demo.dto.UserDTO;
+import com.example.demo.exception.UnauthorizedUserAccessException;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 
@@ -53,7 +54,8 @@ public class UserController {
         UserDTO user = userService.getUser(id);
 
         if (!user.getUsername().equals(loggedInUser) && !isAdmin) {
-            throw new RuntimeException("Access Denied");
+            throw new UnauthorizedUserAccessException(
+        "Access Denied");
         }
 
         return user;

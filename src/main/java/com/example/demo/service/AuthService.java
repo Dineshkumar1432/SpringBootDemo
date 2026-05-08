@@ -42,12 +42,24 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public String login(String username, String password) {
+    // public String login(String username, String password) {
 
-        // Authentication authentication = authenticationManager.authenticate(
-        // new UsernamePasswordAuthenticationToken(username, password));
+    //     // Authentication authentication = authenticationManager.authenticate(
+    //     // new UsernamePasswordAuthenticationToken(username, password));
 
-        // If credentials are wrong → exception will be thrown automatically
+    //     // If credentials are wrong → exception will be thrown automatically
+    //     return jwtUtil.generateToken(username);
+    // }
+     public String login(String username, String password) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
         return jwtUtil.generateToken(username);
     }
+
 }

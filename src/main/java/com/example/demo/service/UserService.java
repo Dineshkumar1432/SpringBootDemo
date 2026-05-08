@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.dto.UserDTO;
+import com.example.demo.exception.UserAlreadyExistsException;
+import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 
@@ -35,6 +37,12 @@ public class UserService {
 
     // ADD user
     public void addUser(User user) {
+        if(userRepository.findByUsername(
+        user.getUsername()).isPresent()) {
+
+    throw new UserAlreadyExistsException(
+            "Username already exists");
+}
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
@@ -42,7 +50,8 @@ public class UserService {
     // DELETE user
     public void deleteUser(int id) {
         if (!userRepository.existsById(id)) {
-            throw new NoSuchElementException("User not found with id: " + id);
+            throw new UserNotFoundException(
+        "User not found");
         }
         userRepository.deleteById(id);
     }
@@ -50,14 +59,18 @@ public class UserService {
     // GET user by ID
     public User getUserById(int id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + id));
+                .orElseThrow(() -> 
+        new UserNotFoundException(
+                "User not found"));
     }
 
     // UPDATE user
     public User updateUser(int id, User userDetails) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + id));
+                .orElseThrow(() -> 
+        new UserNotFoundException(
+                "User not found"));
 
         user.setName(userDetails.getName());
         user.setUsername(userDetails.getUsername());
@@ -79,7 +92,7 @@ public class UserService {
     public UserDTO getUser(int id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + id));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         UserDTO dto = new UserDTO();
 
