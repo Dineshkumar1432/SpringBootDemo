@@ -38,6 +38,13 @@
    <scope>runtime</scope>
    <optional>true</optional>
   </dependency>
+  <!-- ...existing code... -->
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-test</artifactId>
+    <scope>test</scope>
+</dependency>
+<!-- ...existing code... -->
 
   <!-- Lombok -->
   <dependency>
