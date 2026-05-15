@@ -65,6 +65,24 @@ public class AuthControllerTest {
     }
 
     @Test
+    void testLoginWithInvalidCredentials() throws Exception {
+        LoginDTO dto = new LoginDTO();
+        dto.setUsername("dinesh");
+        dto.setPassword("wrongPassword");
+
+        // Mock the service to throw an exception for invalid credentials
+        when(authService.login("dinesh", "wrongPassword"))
+                .thenThrow(new RuntimeException("Invalid password"));
+
+        // Expect the request to fail (400 or 401 depending on your error handling)
+        mockMvc.perform(post("/api/login")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isInternalServerError()); // or .isBadRequest() / .isUnauthorized()
+    }
+
+    @Test
     void testRegister() {
 
     }

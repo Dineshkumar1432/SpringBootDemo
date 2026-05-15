@@ -25,100 +25,114 @@
 
  <dependencies>
 
-  <!-- Spring Boot Web -->
+  <!-- Spring Boot Web Starter for building RESTful web services -->
   <dependency>
    <groupId>org.springframework.boot</groupId>
    <artifactId>spring-boot-starter-web</artifactId>
   </dependency>
 
-  <!-- DevTools -->
+  <!-- Spring Boot DevTools for development-time features like auto-restart -->
   <dependency>
    <groupId>org.springframework.boot</groupId>
    <artifactId>spring-boot-devtools</artifactId>
    <scope>runtime</scope>
    <optional>true</optional>
   </dependency>
-  <!-- ...existing code... -->
-<dependency>
+
+  <!-- Spring Security Test for testing security-related functionality -->
+  <dependency>
     <groupId>org.springframework.security</groupId>
     <artifactId>spring-security-test</artifactId>
     <scope>test</scope>
-</dependency>
-<!-- ...existing code... -->
+  </dependency>
 
-  <!-- Lombok -->
+  <!-- H2 Database for in-memory database during testing -->
+  <dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <scope>test</scope>
+  </dependency>
+
+  <!-- Lombok for reducing boilerplate code -->
   <dependency>
    <groupId>org.projectlombok</groupId>
    <artifactId>lombok</artifactId>
    <optional>true</optional>
   </dependency>
 
+  <!-- Spring Boot Security Starter for authentication and authorization -->
   <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-security</artifactId>
-</dependency>
-<!-- JWT API -->
-<dependency>
+  </dependency>
+
+  <!-- JWT API for JSON Web Token handling -->
+  <dependency>
     <groupId>io.jsonwebtoken</groupId>
     <artifactId>jjwt-api</artifactId>
     <version>0.11.5</version>
-</dependency>
+  </dependency>
 
-<!-- JWT Implementation -->
-<dependency>
+  <!-- JWT Implementation for runtime JWT operations -->
+  <dependency>
     <groupId>io.jsonwebtoken</groupId>
     <artifactId>jjwt-impl</artifactId>
     <version>0.11.5</version>
     <scope>runtime</scope>
-</dependency>
+  </dependency>
 
-<!-- JWT JSON parser -->
-<dependency>
+  <!-- JWT Jackson for JSON parsing in JWT -->
+  <dependency>
     <groupId>io.jsonwebtoken</groupId>
     <artifactId>jjwt-jackson</artifactId>
     <version>0.11.5</version>
     <scope>runtime</scope>
-</dependency>
-  <!-- Testing -->
+  </dependency>
+
+  <!-- Spring Boot Test Starter for unit and integration testing -->
   <dependency>
    <groupId>org.springframework.boot</groupId>
    <artifactId>spring-boot-starter-test</artifactId>
    <scope>test</scope>
   </dependency>
-<!-- Spring Data JPA -->
-  <dependency>
- <groupId>org.springframework.boot</groupId>
- <artifactId>spring-boot-starter-data-jpa</artifactId>
-</dependency>
-<!-- MySQL Connector -->
 
-<dependency>
- <groupId>com.mysql</groupId>
- <artifactId>mysql-connector-j</artifactId>
- <scope>runtime</scope>
-</dependency>
-<!-- Validation --> 
-<dependency>
- <groupId>org.springframework.boot</groupId>
- <artifactId>spring-boot-starter-validation</artifactId>
-</dependency>
-<!-- Swagger/OpenAPI -->
-<dependency>
+  <!-- Spring Boot Data JPA Starter for JPA-based data access -->
+  <dependency>
+   <groupId>org.springframework.boot</groupId>
+   <artifactId>spring-boot-starter-data-jpa</artifactId>
+  </dependency>
+
+  <!-- MySQL Connector for connecting to MySQL database -->
+  <dependency>
+   <groupId>com.mysql</groupId>
+   <artifactId>mysql-connector-j</artifactId>
+   <scope>runtime</scope>
+  </dependency>
+
+  <!-- Spring Boot Validation Starter for bean validation -->
+  <dependency>
+   <groupId>org.springframework.boot</groupId>
+   <artifactId>spring-boot-starter-validation</artifactId>
+  </dependency>
+
+  <!-- SpringDoc OpenAPI for generating API documentation -->
+  <dependency>
     <groupId>org.springdoc</groupId>
     <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
     <version>2.5.0</version>
-</dependency>
-<!-- Kafka -->
-<dependency>
+  </dependency>
+
+  <!-- Spring Kafka for Apache Kafka messaging -->
+  <dependency>
     <groupId>org.springframework.kafka</groupId>
     <artifactId>spring-kafka</artifactId>
-</dependency>
+  </dependency>
 
-<!-- Actuator -->
-<dependency>
+  <!-- Spring Boot Actuator for application monitoring and management -->
+  <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-actuator</artifactId>
-</dependency>
+  </dependency>
 
  </dependencies>
 
