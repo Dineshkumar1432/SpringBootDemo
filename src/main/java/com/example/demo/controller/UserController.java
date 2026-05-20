@@ -1,5 +1,8 @@
 package com.example.demo.controller;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,7 +42,7 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public UserDTO getUser(@PathVariable int id) {
-
+        System.out.println("CONTROLLER METHOD");
         String loggedInUser = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
@@ -55,7 +58,7 @@ public class UserController {
 
         if (!user.getUsername().equals(loggedInUser) && !isAdmin) {
             throw new UnauthorizedUserAccessException(
-        "Access Denied");
+                    "Access Denied");
         }
 
         return user;
@@ -70,6 +73,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/users/{id}")
+    @CacheEvict(value = "users", key = "#id")
     public String deleteUser(@PathVariable int id) {
         userService.deleteUser(id);
         return "User deleted successfully";
@@ -77,15 +81,16 @@ public class UserController {
 
     // @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/users/{id}")
+    @CachePut(value = "users", key = "#id")
     public void updateUser(@PathVariable int id, @RequestBody User user) {
-
+        System.out.println("DB CALL");
         String loggedInUser = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
 
         UserDTO existingUser = userService.getUser(id);
 
-        //  Only owner can update
+        // Only owner can update
         if (!existingUser.getUsername().equals(loggedInUser)) {
             throw new RuntimeException("Access Denied");
         }

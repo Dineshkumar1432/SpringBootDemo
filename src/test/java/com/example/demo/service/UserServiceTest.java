@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.example.demo.dto.UserDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 
@@ -74,24 +75,24 @@ public class UserServiceTest {
                 when(userRepository.findById(1))
                                 .thenReturn(Optional.of(user));
 
-                User result = userService.getUserById(1);
+                UserDTO result = userService.getUser(1);
 
                 assertEquals("dinesh", result.getUsername());
         }
 
-        @Test
-        void testGetUserById() {
-                User user = new User();
-                user.setId(1);
-                user.setUsername("dinesh");
+        // @Test
+        // void testGetUserById() {
+        // User user = new User();
+        // user.setId(1);
+        // user.setUsername("dinesh");
 
-                when(userRepository.findById(1))
-                                .thenReturn(Optional.of(user));
+        // when(userRepository.findById(1))
+        // .thenReturn(Optional.of(user));
 
-                User result = userService.getUserById(1);
+        // User result = userService.getUserById(1);
 
-                assertEquals("dinesh", result.getUsername());
-        }
+        // assertEquals("dinesh", result.getUsername());
+        // }
 
         @Test
         void testGetUsers() {

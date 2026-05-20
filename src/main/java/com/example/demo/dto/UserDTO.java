@@ -6,11 +6,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = false)
 
-public class UserDTO {
+public class UserDTO implements Serializable{
     @NotBlank(message = "Name cannot be empty")
     @Size(min = 3, message = "Name must have at least 3 characters")
     @NotEmpty(message = "Name cannot be empty")

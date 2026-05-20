@@ -1,6 +1,8 @@
 package com.example.demo.dto;
 
-public class OrderDTO {
+import java.io.Serializable;
+
+public class OrderDTO implements Serializable {
     private String product;
 
     public OrderDTO() {

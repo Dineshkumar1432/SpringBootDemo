@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
@@ -11,8 +13,6 @@ import com.example.demo.model.User;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.UserRepository;
 
-
-
 @Service
 public class OrderService {
 
@@ -20,7 +20,7 @@ public class OrderService {
     private final UserRepository userRepository;
 
     @Autowired
-   private KafkaProducerService kafkaProducerService;
+    private KafkaProducerService kafkaProducerService;
 
     public OrderService(OrderRepository orderRepository,
             UserRepository userRepository) {
@@ -29,27 +29,34 @@ public class OrderService {
         this.userRepository = userRepository;
     }
 
-  public Order createOrder(int userId, String product) {
+    @CachePut(value = "orders", key = "#userId + '-' + #orderId")
 
-    Order order = new Order();
-    order.setProduct(product);
-    order.setUser(userRepository.findById(userId).orElseThrow());
+    public Order createOrder(int userId, String product) {
 
-    Order savedOrder = orderRepository.save(order);
+        Order order = new Order();
+        order.setProduct(product);
+        order.setUser(userRepository.findById(userId).orElseThrow());
 
-    // 🔥 SEND EVENT TO KAFKA
-    kafkaProducerService.sendOrderEvent(
-        new OrderEvent(userId, product)
-    );
+        Order savedOrder = orderRepository.save(order);
 
-    return savedOrder;
-}
-     public List<Order> getUserOrders(int userId) {
+        // 🔥 SEND EVENT TO KAFKA
+        kafkaProducerService.sendOrderEvent(
+                new OrderEvent(userId, product));
+
+        return savedOrder;
+    }
+
+    @Cacheable(value = "orders", key = "#userId")
+
+    public List<Order> getUserOrders(int userId) {
 
         User user = userRepository.findById(userId).orElseThrow();
 
         return user.getOrders();
     }
+
+    @Cacheable(value = "orders", key = "#userId + '-' + #orderId")
+
     public Order getUserOrder(int userId, int orderId) {
         User user = userRepository.findById(userId).orElseThrow();
 
@@ -58,6 +65,7 @@ public class OrderService {
                 .findFirst()
                 .orElseThrow();
     }
+
     public List<Order> getOrders() {
         return orderRepository.findAll();
     }
