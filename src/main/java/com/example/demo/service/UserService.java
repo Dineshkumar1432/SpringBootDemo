@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.dto.UserDTO;
@@ -30,20 +32,36 @@ public class UserService {
     // GET all users (no pagination)
     @Cacheable(value = "usersWithoutPagination")
 
-    public List<User> getUsersWithoutPagination() {
-        return userRepository.findAll();
+    public List<UserDTO> getUsersWithoutPagination() {
+        return userRepository.findAll().stream()
+                .map(user -> {
+                    UserDTO dto = new UserDTO();
+                    dto.setId(user.getId());
+                    dto.setName(user.getName());
+                    dto.setUsername(user.getUsername());
+                    dto.setRole(user.getRole());
+
+                    return dto;
+                })
+                .toList();
     }
 
     // GET users with pagination
-    @Cacheable(value = "users", key = "#page + '-' + #size")
+    @Cacheable(value = "usersList", key = "#page + '-' + #size")
 
-    public Page<User> getUsers(int page, int size) {
+    public Page<UserDTO> getUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return userRepository.findAll(pageable);
+        Page<User> users = userRepository.findAll(pageable);
+        return users.map(user -> {
+            UserDTO dto = new UserDTO();
+            dto.setName(user.getName());
+            dto.setUsername(user.getUsername());
+            return dto;
+        });
     }
 
     // ADD user
-
+    @CacheEvict(value = "usersList", allEntries = true)
     public void addUser(User user) {
         if (userRepository.findByUsername(
                 user.getUsername()).isPresent()) {
@@ -56,7 +74,12 @@ public class UserService {
     }
 
     // DELETE user
-    @CacheEvict(value = "users", key = "#id")
+
+    @Caching(evict = {
+            @CacheEvict(value = "userById", key = "#id"),
+            @CacheEvict(value = "usersList", allEntries = true)
+    })
+
     public void deleteUser(int id) {
         if (!userRepository.existsById(id)) {
             throw new UserNotFoundException(
@@ -73,7 +96,8 @@ public class UserService {
     // }
 
     // UPDATE user
-    @CachePut(value = "users", key = "#id")
+    @CacheEvict(value = "usersList", allEntries = true)
+    @CachePut(value = "usersById", key = "#id")
     public User updateUser(int id, User userDetails) {
 
         User user = userRepository.findById(id)
@@ -99,10 +123,13 @@ public class UserService {
     }
 
     // GET USER DTO (safe response)
-    @Cacheable(value = "users", key = "#id")
+
+    @Transactional // ✅ VERY IMPORTANT
+    @Cacheable(value = "usersById", key = "#id")
     public UserDTO getUser(int id) {
 
-        System.out.println(" Service DB CALL");
+        System.out.println("Service DB CALL ✅");
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -111,15 +138,19 @@ public class UserService {
         dto.setName(user.getName());
         dto.setUsername(user.getUsername());
 
-        List<OrderDTO> orderDTOs = (user.getOrders() == null)
-                ? List.of()
-                : user.getOrders()
-                        .stream()
-                        .map(order -> new OrderDTO(order.getProduct()))
-                        .toList();
-
-        dto.setOrders(orderDTOs);
+        // ✅ SAFE: avoid lazy crash
+        if (user.getOrders() != null) {
+            List<OrderDTO> orders = user.getOrders()
+                    .stream()
+                    .map(o -> new OrderDTO(o.getProduct()))
+                    .toList();
+            // dto.setOrders(List.of()); // ✅ TEMP FIX
+            dto.setOrders(orders);
+        } else {
+            dto.setOrders(List.of());
+        }
 
         return dto;
     }
+
 }

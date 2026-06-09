@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,93 +13,107 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // User not found
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFound(
-            UserNotFoundException ex) {
+        // User not found
+        @ExceptionHandler(UserNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleUserNotFound(
+                        UserNotFoundException ex) {
 
-        ErrorResponse error = new ErrorResponse(
-                ex.getMessage(),
-                HttpStatus.NOT_FOUND.value());
+                ErrorResponse error = new ErrorResponse(
+                                ex.getMessage(),
+                                HttpStatus.NOT_FOUND.value());
 
-        return new ResponseEntity<>(
-                error,
-                HttpStatus.NOT_FOUND);
-    }
+                return new ResponseEntity<>(
+                                error,
+                                HttpStatus.NOT_FOUND);
+        }
 
-    // User already exists
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleUserAlreadyExists(
-            UserAlreadyExistsException ex) {
+        // User already exists
+        @ExceptionHandler(UserAlreadyExistsException.class)
+        public ResponseEntity<ErrorResponse> handleUserAlreadyExists(
+                        UserAlreadyExistsException ex) {
 
-        ErrorResponse error = new ErrorResponse(
-                ex.getMessage(),
-                HttpStatus.CONFLICT.value());
+                ErrorResponse error = new ErrorResponse(
+                                ex.getMessage(),
+                                HttpStatus.CONFLICT.value());
 
-        return new ResponseEntity<>(
-                error,
-                HttpStatus.CONFLICT);
-    }
+                return new ResponseEntity<>(
+                                error,
+                                HttpStatus.CONFLICT);
+        }
 
-    // Unauthorized access
-    @ExceptionHandler(UnauthorizedUserAccessException.class)
-    public ResponseEntity<ErrorResponse> handleUnauthorizedAccess(
-            UnauthorizedUserAccessException ex) {
+        // Unauthorized access
+        @ExceptionHandler(UnauthorizedUserAccessException.class)
+        public ResponseEntity<ErrorResponse> handleUnauthorizedAccess(
+                        UnauthorizedUserAccessException ex) {
 
-        ErrorResponse error = new ErrorResponse(
-                ex.getMessage(),
-                HttpStatus.FORBIDDEN.value());
+                ErrorResponse error = new ErrorResponse(
+                                ex.getMessage(),
+                                HttpStatus.FORBIDDEN.value());
 
-        return new ResponseEntity<>(
-                error,
-                HttpStatus.FORBIDDEN);
-    }
+                return new ResponseEntity<>(
+                                error,
+                                HttpStatus.FORBIDDEN);
+        }
 
-    // Invalid request
-    @ExceptionHandler(InvalidRequestException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidRequest(
-            InvalidRequestException ex) {
+        // Invalid credentials
+        @ExceptionHandler(BadCredentialsException.class)
+        public ResponseEntity<ErrorResponse> handleBadCredentials(
+                        BadCredentialsException ex) {
 
-        ErrorResponse error = new ErrorResponse(
-                ex.getMessage(),
-                HttpStatus.BAD_REQUEST.value());
+                ErrorResponse error = new ErrorResponse(
+                                ex.getMessage(),
+                                HttpStatus.UNAUTHORIZED.value());
 
-        return new ResponseEntity<>(
-                error,
-                HttpStatus.BAD_REQUEST);
-    }
+                return new ResponseEntity<>(
+                                error,
+                                HttpStatus.UNAUTHORIZED);
+        }
 
-    // Validation errors
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidation(
-            MethodArgumentNotValidException ex) {
+        // Invalid request
+        @ExceptionHandler(InvalidRequestException.class)
+        public ResponseEntity<ErrorResponse> handleInvalidRequest(
+                        InvalidRequestException ex) {
 
-        Map<String, String> errors = new HashMap<>();
+                ErrorResponse error = new ErrorResponse(
+                                ex.getMessage(),
+                                HttpStatus.BAD_REQUEST.value());
 
-        ex.getBindingResult()
-                .getFieldErrors()
-                .forEach(error -> {
-                    errors.put(
-                            error.getField(),
-                            error.getDefaultMessage());
-                });
+                return new ResponseEntity<>(
+                                error,
+                                HttpStatus.BAD_REQUEST);
+        }
 
-        return new ResponseEntity<>(
-                errors,
-                HttpStatus.BAD_REQUEST);
-    }
+        // Validation errors
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+        public ResponseEntity<Map<String, String>> handleValidation(
+                        MethodArgumentNotValidException ex) {
 
-    // Generic exception handler
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGenericException(
-            Exception ex) {
+                Map<String, String> errors = new HashMap<>();
 
-        ErrorResponse error = new ErrorResponse(
-                ex.getMessage(),
-                HttpStatus.INTERNAL_SERVER_ERROR.value());
+                ex.getBindingResult()
+                                .getFieldErrors()
+                                .forEach(error -> {
+                                        errors.put(
+                                                        error.getField(),
+                                                        error.getDefaultMessage());
+                                });
 
-        return new ResponseEntity<>(
-                error,
-                HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+                return new ResponseEntity<>(
+                                errors,
+                                HttpStatus.BAD_REQUEST);
+        }
+
+        // Generic exception handler
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<ErrorResponse> handleGenericException(
+                        Exception ex) {
+
+                ErrorResponse error = new ErrorResponse(
+                                ex.getMessage(),
+                                HttpStatus.INTERNAL_SERVER_ERROR.value());
+
+                return new ResponseEntity<>(
+                                error,
+                                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 }

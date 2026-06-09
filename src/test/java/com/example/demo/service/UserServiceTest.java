@@ -107,7 +107,7 @@ public class UserServiceTest {
                 when(userRepository.findAll())
                                 .thenReturn(users);
 
-                List<User> result = userService.getUsersWithoutPagination();
+                List<UserDTO> result = userService.getUsersWithoutPagination();
 
                 assertEquals(1, result.size());
                 assertEquals("dinesh", result.get(0).getUsername());
@@ -126,7 +126,7 @@ public class UserServiceTest {
                 when(userRepository.findAll())
                                 .thenReturn(users);
 
-                List<User> result = userService.getUsersWithoutPagination();
+                List<UserDTO> result = userService.getUsersWithoutPagination();
 
                 assertEquals(1, result.size());
                 assertEquals("dinesh", result.get(0).getUsername());

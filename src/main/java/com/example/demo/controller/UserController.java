@@ -17,7 +17,8 @@ import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("api/users")
+@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
 
     private final UserService userService;
@@ -26,23 +27,27 @@ public class UserController {
         this.userService = userService;
     }
 
+    // ✅ GET ALL USERS (ADMIN)
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/users")
-    public List<User> getUsersWithoutPagination() {
+    @GetMapping
+    public List<UserDTO> getUsersWithoutPagination() {
         return userService.getUsersWithoutPagination();
     }
 
-    @GetMapping("/usersPaginated")
-    public Page<User> getUsers(
+    // ✅ PAGINATION
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/paginated")
+    public Page<UserDTO> getUsers(
             @RequestParam int page,
             @RequestParam int size) {
-
         return userService.getUsers(page, size);
     }
 
-    @GetMapping("/users/{id}")
+    // ✅ GET USER BY ID
+    @GetMapping("/{id}")
     public UserDTO getUser(@PathVariable int id) {
-        System.out.println("CONTROLLER METHOD");
+        System.out.println("CONTROLLER METHOD ✅");
+
         String loggedInUser = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
@@ -57,40 +62,40 @@ public class UserController {
         UserDTO user = userService.getUser(id);
 
         if (!user.getUsername().equals(loggedInUser) && !isAdmin) {
-            throw new UnauthorizedUserAccessException(
-                    "Access Denied");
+            throw new UnauthorizedUserAccessException("Access Denied");
         }
 
         return user;
     }
 
+    // ADD USER
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/users")
+    @PostMapping
     public String addUser(@Valid @RequestBody User user) {
         userService.addUser(user);
         return "User added successfully";
     }
 
+    // DELETE USER
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/{id}")
     @CacheEvict(value = "users", key = "#id")
     public String deleteUser(@PathVariable int id) {
         userService.deleteUser(id);
         return "User deleted successfully";
     }
 
-    // @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/users/{id}")
+    // UPDATE USER
+    @PutMapping("/{id}")
     @CachePut(value = "users", key = "#id")
     public void updateUser(@PathVariable int id, @RequestBody User user) {
-        System.out.println("DB CALL");
+
         String loggedInUser = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
 
         UserDTO existingUser = userService.getUser(id);
 
-        // Only owner can update
         if (!existingUser.getUsername().equals(loggedInUser)) {
             throw new RuntimeException("Access Denied");
         }
@@ -98,9 +103,9 @@ public class UserController {
         userService.updateUser(id, user);
     }
 
-    @GetMapping("/users/search")
+    // SEARCH USER
+    @GetMapping("/search")
     public List<User> searchUser(@RequestParam String name) {
         return userService.searchByName(name);
     }
-
 }

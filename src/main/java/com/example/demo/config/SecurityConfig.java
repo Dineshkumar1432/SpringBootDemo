@@ -4,27 +4,33 @@ import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import org.springframework.http.HttpMethod;
+
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.demo.repository.UserRepository;
 import com.example.demo.util.JwtFilter;
-
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import com.example.demo.model.User;
 
 @Configuration
-@EnableMethodSecurity
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
@@ -37,26 +43,45 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
+                // ✅ Enable CORS
+                .cors(Customizer.withDefaults())
+
+                // ✅ Disable CSRF for APIs
                 .csrf(csrf -> csrf.disable())
+
+                // ✅ Stateless session (JWT)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // ✅ Authorization rules
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login/**").permitAll()
-                        .requestMatchers("/api/register/**").permitAll()
-                        .requestMatchers("/hello").permitAll()
-                        .requestMatchers("/").permitAll()
+
+                        // ✅ Allow preflight requests (VERY IMPORTANT)
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // ✅ Allow auth endpoints (FIXED)
+                        .requestMatchers("/auth/**").permitAll()
+
+                        // ✅ Public endpoints (optional)
+                        .requestMatchers("/", "/hello").permitAll()
+
+                        // ✅ Swagger (optional)
                         .requestMatchers(
-                                "/api/login",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html")
                         .permitAll()
+
+                        // ✅ Everything else requires authentication
                         .anyRequest().authenticated())
+
+                // ✅ Add JWT filter
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+    // ✅ UserDetailsService (load user from DB)
     @Bean
     public UserDetailsService userDetailsService(UserRepository repo) {
         return username -> {
@@ -71,11 +96,13 @@ public class SecurityConfig {
         };
     }
 
+    // ✅ Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // ✅ Authentication manager
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

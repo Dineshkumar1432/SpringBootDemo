@@ -13,6 +13,8 @@ import com.example.demo.model.User;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class OrderService {
 
@@ -29,7 +31,7 @@ public class OrderService {
         this.userRepository = userRepository;
     }
 
-    @CachePut(value = "orders", key = "#userId + '-' + #orderId")
+    // @CachePut(value = "orders", key = "#userId + '-' + #result.id")
 
     public Order createOrder(int userId, String product) {
 
@@ -46,16 +48,16 @@ public class OrderService {
         return savedOrder;
     }
 
-    @Cacheable(value = "orders", key = "#userId")
-
+    @Transactional
+    // @Cacheable(value = "orders", key = "#userId")
     public List<Order> getUserOrders(int userId) {
 
         User user = userRepository.findById(userId).orElseThrow();
 
-        return user.getOrders();
+        return user.getOrders(); // ✅ works inside transaction
     }
 
-    @Cacheable(value = "orders", key = "#userId + '-' + #orderId")
+    // @Cacheable(value = "orders", key = "#userId + '-' + #orderId")
 
     public Order getUserOrder(int userId, int orderId) {
         User user = userRepository.findById(userId).orElseThrow();
@@ -68,6 +70,11 @@ public class OrderService {
 
     public List<Order> getOrders() {
         return orderRepository.findAll();
+    }
+
+    public void deleteOrder(int id, int orderId) {
+        orderRepository.deleteById(orderId);
+
     }
 
 }
