@@ -21,14 +21,14 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
 
-    @Autowired
-    private KafkaProducerService kafkaProducerService;
+    private final KafkaProducerService kafkaProducerService;
 
-    public OrderService(OrderRepository orderRepository,
-            UserRepository userRepository) {
+    public OrderService(OrderRepository orderRepository, 
+UserRepository userRepository, KafkaProducerService kafkaProducerService) {
 
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     // @CachePut(value = "orders", key = "#userId + '-' + #result.id")
@@ -41,7 +41,7 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        // 🔥 SEND EVENT TO KAFKA
+        //  SEND EVENT TO KAFKA
         kafkaProducerService.sendOrderEvent(
                 new OrderEvent(userId, product));
 
@@ -54,7 +54,7 @@ public class OrderService {
 
         User user = userRepository.findById(userId).orElseThrow();
 
-        return user.getOrders(); // ✅ works inside transaction
+        return user.getOrders(); // works inside transaction
     }
 
     // @Cacheable(value = "orders", key = "#userId + '-' + #orderId")

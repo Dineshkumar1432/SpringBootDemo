@@ -7,8 +7,6 @@ import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.LoginDTO;
 
 import com.example.demo.model.User;
-import com.example.demo.service.AuthService;
-import com.example.demo.service.UserService;
 
 import java.util.Map;
 
@@ -21,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.security.authentication.AuthenticationManager;
 // import org.springframework.security.core.Authentication;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.serviceImpl.AuthService;
+import com.example.demo.serviceImpl.UserServiceImpl;
 import com.example.demo.util.JwtUtil;
 
 @RestController
@@ -33,9 +33,10 @@ public class AuthController {
     private final UserRepository userRepository;
     private final JwtUtil jwtService;
     private final PasswordEncoder passwordEncoder;
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
-    public AuthController(AuthService authService, UserService userService, AuthenticationManager authenticationManager,
+    public AuthController(AuthService authService, UserServiceImpl userService,
+            AuthenticationManager authenticationManager,
             UserRepository userRepository, JwtUtil jwtService, PasswordEncoder passwordEncoder) {
         this.authService = authService;
         this.authenticationManager = authenticationManager;
@@ -45,22 +46,21 @@ public class AuthController {
         this.userService = userService;
     }
 
-   @PostMapping("/register")
-public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
+    @PostMapping("/register")
+    public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
 
-    userService.addUser(user);
+        userService.addUser(user);
 
-    return ResponseEntity.ok(Map.of(
-        "message", "User registered successfully"
-    ));
-}
+        return ResponseEntity.ok(Map.of(
+                "message", "User registered successfully"));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO request) {
 
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-         System.out.println("Entered password: " + request.getPassword());
+        System.out.println("Entered password: " + request.getPassword());
         System.out.println("Stored password: " + user.getPassword());
         System.out.println("Match: " + passwordEncoder.matches(request.getPassword(), user.getPassword()));
 
@@ -68,9 +68,8 @@ public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
             throw new RuntimeException("Bad credentials");
         }
 
-       String token = jwtService.generateToken(user);
+        String token = jwtService.generateToken(user);
 
-       
         return ResponseEntity.ok(Map.of(
                 "token", token,
                 "role", jwtService.extractRole(token), // ✅ MUST RETURN

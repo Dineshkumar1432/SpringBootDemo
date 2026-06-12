@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.serviceImpl.UserServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -26,7 +27,7 @@ public class UserServiceTest {
         private UserRepository userRepository;
 
         @InjectMocks
-        private UserService userService;
+        private UserServiceImpl userService;
 
         @Test
         void testAddUser() {

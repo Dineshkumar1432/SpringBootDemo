@@ -8,8 +8,8 @@ import java.util.*;
 
 import com.example.demo.dto.UserDTO;
 import com.example.demo.model.Order;
-import com.example.demo.service.OrderService;
-import com.example.demo.service.UserService;
+import com.example.demo.serviceImpl.OrderService;
+import com.example.demo.serviceImpl.UserServiceImpl;
 
 @RestController
 @RequestMapping("/api")
@@ -17,9 +17,9 @@ import com.example.demo.service.UserService;
 public class OrderController {
 
     private final OrderService orderService;
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
-    public OrderController(OrderService orderService, UserService userService) {
+    public OrderController(OrderService orderService, UserServiceImpl userService) {
         this.orderService = orderService;
         this.userService = userService;
     }

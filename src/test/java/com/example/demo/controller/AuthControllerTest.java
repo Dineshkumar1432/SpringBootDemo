@@ -25,7 +25,7 @@ import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.LoginDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.service.AuthService;
+import com.example.demo.serviceImpl.AuthService;
 import com.example.demo.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

@@ -12,7 +12,7 @@ import java.util.*;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.exception.UnauthorizedUserAccessException;
 import com.example.demo.model.User;
-import com.example.demo.service.UserService;
+import com.example.demo.serviceImpl.UserServiceImpl;
 
 import jakarta.validation.Valid;
 
@@ -21,9 +21,9 @@ import jakarta.validation.Valid;
 @CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
-    public UserController(UserService userService) {
+    public UserController(UserServiceImpl userService) {
         this.userService = userService;
     }
 
