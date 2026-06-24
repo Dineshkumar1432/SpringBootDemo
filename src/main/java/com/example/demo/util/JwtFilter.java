@@ -34,8 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-
-        // 🔥 SKIP LOGIN REQUEST
+        // SKIP LOGIN REQUEST
         if (request.getRequestURI().equals("/api/login")) {
             filterChain.doFilter(request, response);
             return;

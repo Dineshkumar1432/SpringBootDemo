@@ -16,14 +16,14 @@ public class AuthService {
     // private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public AuthService(AuthenticationManager authenticationManager,
-            JwtUtil jwtUtil, UserRepository userRepository) {
+            JwtUtil jwtUtil, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         // this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void register(User user) {

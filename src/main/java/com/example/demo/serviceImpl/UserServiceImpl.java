@@ -63,6 +63,7 @@ public class UserServiceImpl implements UserService {
             UserDTO dto = new UserDTO();
             dto.setName(user.getName());
             dto.setUsername(user.getUsername());
+            dto.setId(user.getId());
             return dto;
         });
     }
@@ -140,7 +141,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         UserDTO dto = new UserDTO();
-
+        dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setUsername(user.getUsername());
 

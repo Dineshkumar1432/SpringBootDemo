@@ -3,7 +3,7 @@ package com.example.demo.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.AuthResponse;
+// import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.LoginDTO;
 
 import com.example.demo.model.User;
@@ -11,7 +11,6 @@ import com.example.demo.model.User;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,8 +71,8 @@ public class AuthController {
 
         return ResponseEntity.ok(Map.of(
                 "token", token,
-                "role", jwtService.extractRole(token), // ✅ MUST RETURN
-                "userId", user.getId() // ✅ MUST RETURN
+                "role", jwtService.extractRole(token), // MUST RETURN
+                "userId", user.getId() //  MUST RETURN
         ));
     }
 }

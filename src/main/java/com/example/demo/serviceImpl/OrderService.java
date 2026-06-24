@@ -1,8 +1,8 @@
-package com.example.demo.service;
+package com.example.demo.serviceImpl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.cache.annotation.CachePut;
+// import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
@@ -23,8 +23,8 @@ public class OrderService {
 
     private final KafkaProducerService kafkaProducerService;
 
-    public OrderService(OrderRepository orderRepository, 
-UserRepository userRepository, KafkaProducerService kafkaProducerService) {
+    public OrderService(OrderRepository orderRepository,
+            UserRepository userRepository, KafkaProducerService kafkaProducerService) {
 
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
@@ -41,7 +41,7 @@ UserRepository userRepository, KafkaProducerService kafkaProducerService) {
 
         Order savedOrder = orderRepository.save(order);
 
-        //  SEND EVENT TO KAFKA
+        // SEND EVENT TO KAFKA
         kafkaProducerService.sendOrderEvent(
                 new OrderEvent(userId, product));
 
