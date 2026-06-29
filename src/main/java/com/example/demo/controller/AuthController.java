@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 // import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.LoginDTO;
@@ -10,6 +12,7 @@ import com.example.demo.model.User;
 
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -45,14 +48,38 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
+ @PostMapping("/register")
+public ResponseEntity<Map<String, String>> register(
+        @RequestParam String name,
+        @RequestParam String username,
+        @RequestParam String email,
+        @RequestParam String password,
+        @RequestParam String role,
+        @RequestParam(required = false) MultipartFile file) {
+
+    try {
+        User user = new User();
+        user.setName(name);
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setRole(role);
+
+        if (file != null && !file.isEmpty()) {
+            user.setPhoto(file.getBytes());
+            user.setPhotoType(file.getContentType());
+        }
 
         userService.addUser(user);
 
         return ResponseEntity.ok(Map.of(
                 "message", "User registered successfully"));
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("message", "Registration failed"));
     }
+}
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO request) {

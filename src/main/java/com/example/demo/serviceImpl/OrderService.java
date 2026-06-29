@@ -33,21 +33,24 @@ public class OrderService {
 
     // @CachePut(value = "orders", key = "#userId + '-' + #result.id")
 
-    public Order createOrder(int userId, String product) {
+   public Order createOrder(int userId, String product) {
 
-        Order order = new Order();
-        order.setProduct(product);
-        order.setUser(userRepository.findById(userId).orElseThrow());
+    Order order = new Order();
+    order.setProduct(product);
+    order.setUser(userRepository.findById(userId).orElseThrow());
 
-        Order savedOrder = orderRepository.save(order);
+    Order savedOrder = orderRepository.save(order);
 
-        // SEND EVENT TO KAFKA
+    
+    try {
         kafkaProducerService.sendOrderEvent(
-                new OrderEvent(userId, product));
-
-        return savedOrder;
+            new OrderEvent(userId, product));
+    } catch (Exception e) {
+        System.out.println("Kafka disabled for now");
     }
 
+    return savedOrder;
+}
     @Transactional
     // @Cacheable(value = "orders", key = "#userId")
     public List<Order> getUserOrders(int userId) {

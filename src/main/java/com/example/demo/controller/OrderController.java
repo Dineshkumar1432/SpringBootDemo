@@ -47,9 +47,11 @@ public class OrderController {
         return orderService.getUserOrders(id);
     }
 
-    @PostMapping("/users/{id}/orders")
-    public Order createOrder(@PathVariable int id,
-            @RequestBody Map<String, String> body) {
+   @PostMapping("/users/{id}/orders")
+public ResponseEntity<?> createOrder(@PathVariable int id,
+        @RequestBody Map<String, String> body) {
+
+    try {
 
         String product = body.get("product");
 
@@ -67,12 +69,19 @@ public class OrderController {
         UserDTO user = userService.getUser(id);
 
         if (!user.getUsername().equals(loggedInUser) && !isAdmin) {
-            throw new RuntimeException("Access Denied");
+            return ResponseEntity.status(403).body("Access Denied"); // FIX
         }
 
-        return orderService.createOrder(id, product);
-    }
+        //  your original logic
+        Order order = orderService.createOrder(id, product);
 
+        return ResponseEntity.ok(order);
+
+    } catch (Exception e) {
+        e.printStackTrace(); //  See real error in backend console
+        return ResponseEntity.status(500).body("Error: " + e.getMessage());
+    }
+}
     @DeleteMapping("/users/{id}/orders/{orderId}")
     public ResponseEntity<Map<String, String>> deleteOrder(
             @PathVariable int id,

@@ -26,6 +26,13 @@ public class User implements Serializable {
     private String password;
     private String role;
 
+    @Lob
+@Basic(fetch = FetchType.LAZY)
+@Column(name = "photo", columnDefinition = "LONGBLOB")
+private byte[] photo;
+
+private String photoType;
+
     public User() {
     }
 
@@ -78,4 +85,19 @@ public class User implements Serializable {
     public void setRole(String role) {
         this.role = role;
     }
+    public byte[] getPhoto() {
+    return photo;
+}
+
+public void setPhoto(byte[] photo) {
+    this.photo = photo;
+}
+
+public String getPhotoType() {
+    return photoType;
+}
+
+public void setPhotoType(String photoType) {
+    this.photoType = photoType;
+}
 }

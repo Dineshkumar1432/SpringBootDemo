@@ -69,17 +69,17 @@ public class UserServiceImpl implements UserService {
     }
 
     // ADD user
-    @CacheEvict(value = "usersList", allEntries = true)
-    public void addUser(User user) {
-        if (userRepository.findByUsername(
-                user.getUsername()).isPresent()) {
+@CacheEvict(value = "usersList", allEntries = true)
+public void addUser(User user) {
 
-            throw new UserAlreadyExistsException(
-                    "Username already exists");
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+    if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+        throw new UserAlreadyExistsException("Username already exists");
     }
+
+    user.setPassword(passwordEncoder.encode(user.getPassword())); //  only here
+
+    userRepository.save(user);
+}
 
     // DELETE user
 
@@ -160,5 +160,7 @@ public class UserServiceImpl implements UserService {
 
         return dto;
     }
+
+    
 
 }

@@ -28,6 +28,8 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private UserRepository userRepository;
 
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
             HttpServletResponse response,
@@ -35,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         // SKIP LOGIN REQUEST
-        if (request.getRequestURI().equals("/api/login")) {
+        if (request.getRequestURI().equals("/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -48,22 +50,27 @@ public class JwtFilter extends OncePerRequestFilter {
 
             try {
                 String username = jwtUtil.extractUsername(token);
+                System.out.println("USERNAME: " + username);
 
-                if (username != null &&
-                        SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (username != null ) {
 
                     User user = userRepository.findByUsername(username).orElse(null);
 
-                    if (user != null) {
+if (user != null) {
 
-                        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                                user.getUsername(),
-                                null,
-                                Collections.singletonList(
-                                        new SimpleGrantedAuthority("ROLE_" + user.getRole().toUpperCase())));
+   UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+    user.getUsername(),   // string principal (IMPORTANT)
+    null,
+    Collections.singletonList(
+        new SimpleGrantedAuthority("ROLE_" + user.getRole().toUpperCase()))
+);
 
-                        SecurityContextHolder.getContext().setAuthentication(auth);
-                    }
+SecurityContextHolder.getContext().setAuthentication(auth);
+
+    System.out.println("------ JWT FILTER START ------");
+System.out.println("PATH: " + request.getRequestURI());
+System.out.println("HEADER: " + request.getHeader("Authorization"));
+}
                 }
 
             } catch (Exception e) {
